@@ -1,0 +1,2 @@
+void monteCarlo();
+void testEncryption();
