@@ -1,2 +1,2 @@
-void monteCarlo();
-void testEncryption();
+int monteCarlo();
+int testEncryption();

@@ -1,3 +1,10 @@
 ManagedString generateSalt();
 ManagedString generateSHA256(ManagedString plain);
+ManagedString padMessage(ManagedString message);
 void encryptMessageECB(ManagedString plaintext, uint8_t key[32], uint8_t * buffer);
+void decryptMessageECB(uint8_t key[32], uint8_t cryptdata[16], uint8_t * cryptbuffer);
+PacketBuffer encrypt(ManagedString command, ManagedString salt);
+ManagedString decrypt(PacketBuffer crypttext);
+ManagedString get_secret();
+ManagedString getKey(ManagedString salt);
+ManagedString salt_secret(ManagedString secret, ManagedString salt);

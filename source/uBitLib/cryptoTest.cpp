@@ -8,7 +8,7 @@
 This function implements the AES MonteCarlo Test. It is used to prove a succesfull implementation of the AES encryption scheme on a device.
 As described in: https://csrc.nist.rip/encryption/aes/katmct/katmct.htm
 */
-void monteCarlo()
+int monteCarlo()
 {
     //Defining ciphers needed for the Monte Carlo Test
     #if AES_KEY_LEN == 32
@@ -23,7 +23,6 @@ void monteCarlo()
     memset(key, 0, sizeof(key));
     memset(data,  0, sizeof(data));
 
-    uBit.serial.printf("\r\n Starting secret encryption! ");
     //Starting the Monte Carlo loop
     for(i=0;i<400;i++) {
         uBit.serial.printf("\r\n%d",i);
@@ -53,11 +52,7 @@ void monteCarlo()
     //Comparing the end result with the expected result:
     equ = (memcmp(data, cipher, 16)==0);
 
-    uBit.serial.printf("\r\nAES-%d ECB mode for %d-bit CPU : %s\n",
-      AES_KEY_LEN*8, AES_INT_LEN*8, equ ? "OK" : "FAILED");
-
-    uBit.display.scroll("AES IMPLEMENTATION SUCCESFULL!");
-
+    return equ;
 }
 //END OF MONTE CARLO TEST
 
@@ -65,7 +60,7 @@ void monteCarlo()
 This function encrypts four known plaintexts (in hex) with AES ecb and compares them to the expected outcome.
 If correct the serial connection will display a succes message.
 */
-void testEncryption()
+int testEncryption()
 {
     //Four example ecb keys
     uint8_t ecb_keys[4][32]={{0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c, 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c},
@@ -89,8 +84,6 @@ void testEncryption()
     int i, equ;
     uint8_t data[16], key[AES_KEY_LEN];
     
-    uBit.serial.printf("\r\n**** AES-256 ECB Test ****\r\n");
-    
     // ecb tests
     for (i=0; i<4; i++) {
       memcpy(data, ecb_plain[i], 16);
@@ -108,9 +101,12 @@ void testEncryption()
       #endif
       equ = (memcmp(data, ecb_cipher[i], 16) == 0);
       
-      uBit.serial.printf("\r\n\r\nAES-256 ECB Test #%d : %s\r\n", 
-        (i+1), equ ? "OK" : "FAILED");
+      if (equ==0)
+      {
+        return 0;
+      }
     }
+    return 1;
 }
 //---END OF ENCRYPTION TEST---
 
